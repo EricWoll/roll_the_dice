@@ -1,89 +1,76 @@
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Game {
     private byte playerNumber;
-    private ArrayList<Player> playerList = new ArrayList();
     private String deadPlayer;
+    private byte playerAmount;
+    private Scanner userInput = new Scanner(System.in);
+    private PlayerManager playerManager = new PlayerManager();
+    private Boolean stopPlaying;
 
-    private Scanner userInput;
+    private void setPlayerNumber(byte playerNumber) {
 
-    private static void printCopyright() {
-        System.out.println("====================");
-        System.out.println("    Roll the Dice");
-        System.out.println("    by Eric Woll");
-        System.out.println("====================\n");
-    }
-
-    public void setPlayerNumber(byte playerNumber) {
         this.playerNumber = playerNumber;
     }
 
     public void gameLoop() {
-        Boolean keepPlaying = true;
 
-        while (keepPlaying) {
+        Tools.printCopyright();
 
-            // Print Copyright
-            // Ask for names (2 player)
-            // ask for roll input
+        while (true) {
+            System.out.println("How many players will be playing? ");
+            try {
+                playerAmount = (byte) userInput.nextInt();
+                if (playerAmount > 0) {
+                    setPlayerNumber(playerAmount);
+                    break;
+                } else {
+                    throw new Exception();
+                }
 
-
-            rollDice();
-
-            deadPlayer = checkPlayerHealth();
-
-            if (deadPlayer != "None") {
-
-                // Clear output
-                keepPlaying = playAgainCheck();
+            } catch (Exception e) {
+                System.out.println("That value is not excepted. Try a positive whole number greater than 0.");
             }
         }
+
+        while (!stopPlaying) {
+
+            for (byte i = 0; i < playerAmount; i++) {
+                System.out.print("Enter your name Player" + (i+1) + ": ");
+                playerManager.createPlayer(userInput.nextLine());
+            }
+
+            Tools.enterToContinue("Press enter to roll your dice!");
+
+            playerManager.rollDice();
+
+            deadPlayer = playerManager.checkPlayerHealth();
+
+            if (!deadPlayer.equals("None")) {
+                stopPlaying = !responseIsYes("Would you like to play again (y/n)? ");
+            }
+        }
+
     }
 
-    private boolean playAgainCheck() {
-        String response = new String();
+    public Boolean responseIsYes(String visualOutput) {
+        Scanner userInput = new Scanner(System.in);
+        String response;
+
         while (true) {
-            System.out.println("Would you like to play again (y/n)? ");
+            System.out.println(visualOutput);
             response = userInput.nextLine().toLowerCase();
 
             switch (response) {
                 case "y" -> {return true;}
                 case "n" -> {return false;}
                 default -> {
-                    //Clear output
-                    System.out.println(" '" + response + "' was not an appropriate input. Please try again.");
+                    System.out.println(
+                            " '" + response
+                            + "' was not an appropriate input. Please try again."
+                    );
                 }
             }
-        }
-    }
-
-    private void rollDice() {
-        for (Player p : playerList) {
-            p.generateRoll();
-        }
-    }
-
-    public void addPlayers(Player newPlayer) {
-        playerList.add(newPlayer);
-    }
-
-    private String checkPlayerHealth() {
-        for (Player p : playerList) {
-            if (p.getLives() == 0) {
-                return p.getName();
-            }
-        }
-        return "None";
-    }
-
-    public String getDeadPlayer() {
-        return deadPlayer;
-    }
-
-    public void printPlayers() {
-        for (Player p : playerList) {
-            System.out.println(p.getName());
         }
     }
 }
