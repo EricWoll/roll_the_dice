@@ -18,13 +18,6 @@ public class Main {
 
         game.printPlayers();
 
-        clear.nextLine();
-        System.out.println("clearing");
-        Tools.Clear(operatingSystem);
-
-        System.out.println("cleared");
-        clear.nextLine();
-
 
     }
 }
