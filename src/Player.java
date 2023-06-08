@@ -1,41 +1,20 @@
-import java.util.Random;
-public class Player {
-    private String playerName;
-    private byte lives = 3;
-    private byte roll;
-    private Random numberGenerator = new Random();
+public class Player extends PlayerController {
 
-    public Player(String name) {
-        playerName = name;
-    }
-    public void removeLife() {
+    private boolean continuePlaying;
 
-        lives--;
-    }
-    public void resetLives() {
-
-        lives = 3;
-    }
-    public void generateRoll() {
-
-        roll = (byte) (numberGenerator.nextInt(6) + 1);
-    }
-    public byte getRoll() {
-
-        return roll;
-    }
-    public String getName() {
-
-        return playerName;
+    public Player(boolean isAi, byte lives) {
+        super(isAi, lives);
     }
 
-    public byte getLives() {
-
-        return lives;
+    public void setContinuePlaying(boolean continuePlaying) {
+        this.continuePlaying = continuePlaying;
     }
 
-    public void setLives(byte livesNumber) {
+    public void setName(String name) {
+        this.name = name;
+    }
 
-        lives = livesNumber;
+    public boolean getContinuePlaying() {
+        return continuePlaying;
     }
 }

@@ -1,40 +1,101 @@
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 public class PlayerManager {
-    private ArrayList<Player> playerList = new ArrayList();
-    private Scanner userInput;
+    // PlayerController -> polymorphism to allow Player and AI
+    private Dictionary<String, PlayerController> playerList = new Hashtable<>();
 
-    private void addPlayer(Player newPlayer) {
-        playerList.add(newPlayer);
+    public void addPlayer(PlayerController player) {
+        playerList.put(player.name, player);
     }
-
-    public void createPlayer(String name) {
-        Player p = new Player(name);
-        addPlayer(p);
+    public PlayerController removePlayer (String name) {
+        /**
+         * @param Player name
+         * @return PlayerController object
+         */
+        PlayerController player = playerList.get(name);
+        playerList.remove(name);
+        return player;
     }
-
-    public void removePlayer(Player player) {
-        playerList.remove(player.getClass());
+    public PlayerController getPlayer(String name) {
+        return playerList.get(name);
+    }
+    public byte getPlayerAmount() {
+        return (byte)playerList.size();
     }
     public void rollDice() {
-        for (Player p : playerList) {
-            p.generateRoll();
+        for (Enumeration e = playerList.elements(); e.hasMoreElements();) {
+            playerList.get(e.nextElement()).getRoll();
         }
     }
-
-    public String checkPlayerHealth() {
-        for (Player p : playerList) {
-            if (p.getLives() == 0) {
-                return p.getName();
+    public boolean checkContinuePlaying() {
+        /**
+         * @param none
+         * @return boolean all players agree to continue playing
+         */
+        PlayerController currPlayer;
+        for (Enumeration e = playerList.elements(); e.hasMoreElements();) {
+            currPlayer = playerList.get(e.nextElement());
+            if (currPlayer.isAi() && currPlayer.getContinuePlaying()) {
+                return false;
             }
         }
-        return "None";
+        return true;
+    }
+    public boolean checkForLooser() {
+        /**
+         * @param none
+         * @return boolean game looser found
+         */
+        PlayerController currPlayer;
+        for (Enumeration e = playerList.elements(); e.hasMoreElements();) {
+            currPlayer = playerList.get(e.nextElement());
+            if (currPlayer.getLives() <= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public PlayerController getLooser() {
+        /**
+         * @param none
+         * @return PlayerController object or null if no match found
+         **/
+        PlayerController currPlayer = null;
+        for (Enumeration e = playerList.elements(); e.hasMoreElements();) {
+            currPlayer = playerList.get(e.nextElement());
+            if (currPlayer.getLives() <= 0) {
+                break;
+            }
+        }
+        return currPlayer;
+    }
+    public PlayerController getWinner() {
+        /**
+         * @param none
+         * @return PlayerController object or null if no match found
+         */
+        PlayerController currPlayer = null;
+        for (Enumeration e = playerList.elements(); e.hasMoreElements();) {
+            currPlayer = playerList.get(e.nextElement());
+            if (currPlayer.getLives() > 0) {
+                break;
+            }
+        }
+        return currPlayer;
     }
 
-    public void printPlayers() {
-        for (Player p : playerList) {
-            System.out.println(p.getName());
+    public void resetGame() {
+        /**
+         * Resets game (lives)
+         * @param none
+         * @return none
+         */
+        PlayerController currPlayer = null;
+        for (Enumeration e = playerList.elements(); e.hasMoreElements();) {
+            currPlayer = playerList.get(e.nextElement());
+            currPlayer.setLives(currPlayer.getMaxLives());
         }
     }
 }
