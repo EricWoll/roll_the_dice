@@ -10,11 +10,10 @@ public class Tools {
         System.out.println(message);
         try {
             System.in.read();
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-
 }
+
+

@@ -1,0 +1,3 @@
+Opening : This is the opening of the file
+Middle : This is the middle of the file
+End : This is the end of the file

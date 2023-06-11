@@ -1,10 +1,10 @@
-import java.util.Dictionary;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.Map;
+import java.util.HashMap;
 
 public class PlayerManager {
     // PlayerController -> polymorphism to allow Player and AI
-    private Dictionary<String, PlayerController> playerList = new Hashtable<>();
+    private Map<String, PlayerController> playerList = new HashMap<>();
 
     public void addPlayer(PlayerController player) {
         playerList.put(player.name, player);
@@ -25,8 +25,8 @@ public class PlayerManager {
         return (byte)playerList.size();
     }
     public void rollDice() {
-        for (Enumeration e = playerList.elements(); e.hasMoreElements();) {
-            playerList.get(e.nextElement()).getRoll();
+        for (Map.Entry<String, PlayerController> currPlayer : playerList.entrySet()) {
+            playerList.get(currPlayer.getValue()).getRoll();
         }
     }
     public boolean checkContinuePlaying() {
@@ -34,10 +34,12 @@ public class PlayerManager {
          * @param none
          * @return boolean all players agree to continue playing
          */
-        PlayerController currPlayer;
-        for (Enumeration e = playerList.elements(); e.hasMoreElements();) {
-            currPlayer = playerList.get(e.nextElement());
-            if (currPlayer.isAi() && currPlayer.getContinuePlaying()) {
+        boolean playGame = true;
+        for (Map.Entry<String, PlayerController> currPlayer : playerList.entrySet()) {
+            if(currPlayer.getValue() instanceof Player) {
+                playGame = ((Player)currPlayer.getValue()).getContinuePlaying();
+            }
+            if (!playGame) {
                 return false;
             }
         }
@@ -48,10 +50,8 @@ public class PlayerManager {
          * @param none
          * @return boolean game looser found
          */
-        PlayerController currPlayer;
-        for (Enumeration e = playerList.elements(); e.hasMoreElements();) {
-            currPlayer = playerList.get(e.nextElement());
-            if (currPlayer.getLives() <= 0) {
+        for (Map.Entry<String, PlayerController> currPlayer : playerList.entrySet()) {
+            if (currPlayer.getValue().getLives() <= 0) {
                 return true;
             }
         }
@@ -62,40 +62,29 @@ public class PlayerManager {
          * @param none
          * @return PlayerController object or null if no match found
          **/
-        PlayerController currPlayer = null;
-        for (Enumeration e = playerList.elements(); e.hasMoreElements();) {
-            currPlayer = playerList.get(e.nextElement());
-            if (currPlayer.getLives() <= 0) {
-                break;
+        for (Map.Entry<String, PlayerController> currPlayer : playerList.entrySet()) {
+            if (currPlayer.getValue().getLives() <= 0) {
+                return currPlayer.getValue();
             }
         }
-        return currPlayer;
+        return null;
     }
     public PlayerController getWinner() {
         /**
          * @param none
          * @return PlayerController object or null if no match found
          */
-        PlayerController currPlayer = null;
-        for (Enumeration e = playerList.elements(); e.hasMoreElements();) {
-            currPlayer = playerList.get(e.nextElement());
-            if (currPlayer.getLives() > 0) {
-                break;
+        for (Map.Entry<String, PlayerController> currPlayer : playerList.entrySet()) {
+            if (currPlayer.getValue().getLives() > 0) {
+                return currPlayer.getValue();
             }
         }
-        return currPlayer;
+        return null;
     }
 
     public void resetGame() {
-        /**
-         * Resets game (lives)
-         * @param none
-         * @return none
-         */
-        PlayerController currPlayer = null;
-        for (Enumeration e = playerList.elements(); e.hasMoreElements();) {
-            currPlayer = playerList.get(e.nextElement());
-            currPlayer.setLives(currPlayer.getMaxLives());
+        for (Map.Entry<String, PlayerController> currPlayer : playerList.entrySet()) {
+            currPlayer.getValue().setLives( currPlayer.getValue().getMaxLives() );
         }
     }
 }
