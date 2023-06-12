@@ -1,7 +1,3 @@
-import java.util.Hashtable;
-import java.util.Dictionary;
-import java.util.Enumeration;
-
 public class Main {
 
 
@@ -11,6 +7,8 @@ public class Main {
         overlays.addOverlaysFile("./overlay_files/example.txt");
         overlays.printOverlay("Opening");
         overlays.clearOverlays();
+
+        Tools.enterToContinue("Press Enter");
 
     }
 }
