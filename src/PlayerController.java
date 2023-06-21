@@ -3,12 +3,12 @@ import java.util.Random;
 public class PlayerController {
     protected String name;
     private byte roll;
-    private byte lives;
-    private final byte maxLives;
+    private int lives;
+    private final int maxLives;
     private boolean isAi;
     private Random randDie = new Random();
 
-    public PlayerController(boolean isAi, byte lives ) {
+    public PlayerController(boolean isAi, int lives ) {
         this.isAi = isAi;
         this.lives = lives;
         maxLives = lives;
@@ -20,13 +20,21 @@ public class PlayerController {
     public String getName() {
         return name;
     }
+    public void setName() {
+        name = "Name not set";
+    }
     public byte getRoll() {
         return roll;
     }
-    public byte getLives() { return lives; }
-    public byte getMaxLives() { return maxLives; }
+    public int getLives() { return lives; }
+    public int getMaxLives() { return maxLives; }
     public boolean isAi() {
         return isAi;
     }
-    public void setLives(byte lives) { this.lives = lives; }
+    public void setLives(int livesUpdate) {
+        if (livesUpdate > lives) { lives = maxLives; }
+        else if (livesUpdate < 0) { lives = 0; }
+        else { lives = livesUpdate; }
+    }
+    public void removeLife() { lives-=1; }
 }

@@ -2,7 +2,7 @@ public class Player extends PlayerController {
 
     private boolean continuePlaying;
 
-    public Player(boolean isAi, byte lives) {
+    public Player(boolean isAi, int lives) {
         super(isAi, lives);
     }
 
